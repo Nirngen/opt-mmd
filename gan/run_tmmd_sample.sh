@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 source activate tfzero
-if [[ $1 == 'sample' ]]; then
-    is_train=False
-    echo "Sampling"
-else
-    is_train=True
-fi
+
+is_train=False
+echo "Sampling"
 
 CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-0} python main_tmmd.py \
     --use_kernel --is_train=$is_train \

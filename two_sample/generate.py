@@ -3,7 +3,33 @@ import sys
 
 import numpy as np
 from sklearn.utils import check_random_state
+from statsmodels import multivariate as mul
+def multivariate_t_rvs(m, S, df=np.inf, n=1):
+    '''generate random variables of multivariate t distribution
+    Parameters
 
+    m : array_like
+        mean of random variable, length determines dimension of random variable
+    S : array_like
+        square array of covariance  matrix
+    df : int or float
+        degrees of freedom
+    n : int
+        number of observations, return random array will be (n, len(m))
+    Returns
+       -
+    rvs : ndarray, (n, len(m))
+        each row is an independent draw of a multivariate t distributed
+        random variable
+    '''
+    m = np.asarray(m)
+    d = len(m)
+    if df == np.inf:
+        x = 1.
+    else:
+        x = np.random.chisquare(df, n) / df
+    z = np.random.multivariate_normal(np.zeros(d), S, (n,))
+    return (m + z / np.sqrt(x))[:, None]  # same output format as random.multivariate_normal
 
 ################################################################################
 ### Simple toy problems
@@ -46,16 +72,17 @@ def sample_blobs(n, ratio, rows=5, cols=5, sep=10, rs=None):
     mu = np.zeros(2)
     sigma = np.eye(2)
     X = rs.multivariate_normal(mu, sigma, size=n)
-
     corr_sigma = np.array([[1, correlation], [correlation, 1]])
     Y = rs.multivariate_normal(mu, corr_sigma, size=n)
-
+    #X = multivariate_t_rvs(mu,sigma,n=n)
+    #Y = multivariate_t_rvs(mu,corr_sigma,n=n)
+    #X = X[:, 0]
+    #Y = Y[:, 0]
     # assign to blobs
     X[:, 0] += rs.randint(rows, size=n) * sep
     X[:, 1] += rs.randint(cols, size=n) * sep
     Y[:, 0] += rs.randint(rows, size=n) * sep
     Y[:, 1] += rs.randint(cols, size=n) * sep
-
     return X, Y
 
 
@@ -248,7 +275,7 @@ def generate_data(args, n, dtype=None, rs=None):
         X, Y = sample_blobs(n, args.blobs, rs=rs)
     elif args.mnist_minibatch_gan is not None:
         X, Y = sample_mnist_minibatch_gan(
-            n, args.mnist2_gan, rs=rs, grayscale=args.grayscale, bw=args.bw,
+            n, "D:/Programs/Coding/opt-mmd/two_sample/mnist_minibatch_count100_scaled_1.npz", rs=rs, grayscale=args.grayscale, bw=args.bw,
             trim_edges=args.trim_edges, clip=args.clip, scaled=args.scaled,
             discretize=args.discretize)
     elif args.mnist_traintest:

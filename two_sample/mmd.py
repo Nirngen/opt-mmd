@@ -161,7 +161,7 @@ def _mmd2_and_ratio(K_XX, K_XY, K_YY, unit_diagonal=False, biased=False,
     ratio = mmd2 / T.sqrt(T.largest(var_est, min_var_est))
     return mmd2, ratio
 
-
+#_mmd2_and_ratio(K_XX, K_XY, K_YY, unit_diagonal=True, biased=biased)
 def _mmd2_and_variance(K_XX, K_XY, K_YY, unit_diagonal=False, biased=False):
     m = K_XX.shape[0]  # Assumes X, Y are same shape
 

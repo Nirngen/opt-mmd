@@ -59,7 +59,7 @@ def get_estimates(gen, sigmas=None, n_reps=100, n_null_samps=1000,
         bar.widgets.insert(0, '{} '.format(name))
     for rep in bar(xrange(n_reps)):
         if rep_states:
-            rep = np.random.randint(0, 2**32)
+            rep = np.random.randint(0, 2**31)
             X, Y = gen(rs=rep)
         else:
             X, Y = gen()
